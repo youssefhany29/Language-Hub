@@ -1,0 +1,85 @@
+﻿@{
+    ViewData["Title"] = "Welcome";
+    var isTutor = Context.Session.GetString("IsTutor") == "True";
+    var primaryCtaUrl = isTutor ? "/Home/Dashboard" : "/Home/BrowseCourses";
+    var primaryCtaText = isTutor ? "MY DASHBOARD" : "JOIN US";
+}
+
+<style>
+    .bg-hero {
+        background-image: linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.85)), 
+                          url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1280&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+    }
+</style>
+
+<div class="flex flex-col flex-grow w-full">
+    <div class="bg-hero flex-1 relative flex flex-col min-h-[500px] overflow-hidden">
+        <div class="absolute top-[-20%] left-[-10%] w-[400px] h-[400px] bg-indigo-500/20 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div class="flex-1 flex items-center px-8 md:px-12 lg:px-16 z-10 py-12">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full items-center">
+                <div class="max-w-lg text-left">
+                    <h1 class="text-5xl md:text-6xl font-display font-bold leading-tight mb-4 text-white">
+                        Master a New <br>
+                        <span class="text-indigo-400">Language</span> <br>
+                        Today
+                    </h1>
+                    <p class="text-slate-300 text-base md:text-lg leading-relaxed mb-8 max-w-md">
+                        Connect with expert tutors around the globe. Whether you are traveling, advancing your career, or learning for fun.
+                    </p>
+                    <a href="@primaryCtaUrl" class="inline-block bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-indigo-500/30 transition-all">
+                        @primaryCtaText
+                    </a>
+                </div>
+
+                <div class="flex justify-start lg:justify-end">
+                    @if (Context.Session.GetString("UserName") != null)
+                    {
+                        <div class="bg-slate-900/80 backdrop-blur-md p-8 rounded-2xl w-full max-w-md border border-slate-800 shadow-2xl text-center">
+                            <div class="w-16 h-16 bg-indigo-500 rounded-full flex items-center justify-center text-2xl text-white mx-auto mb-4 shadow-lg"><i class="fa-solid fa-user"></i></div>
+                            <h2 class="text-white text-2xl font-bold mb-2">Welcome back, @Context.Session.GetString("UserName")!</h2>
+                            <p class="text-slate-400 text-sm mb-6">Ready for your next language session?</p>
+                            <a href="/Home/Dashboard" class="block w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 rounded-xl transition-all shadow-lg">Go to My Dashboard</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="bg-slate-900/80 backdrop-blur-md p-8 rounded-2xl w-full max-w-md border border-slate-800 shadow-2xl">
+                            <div class="text-center mb-6"><h2 class="bg-white text-indigo-600 text-xl font-bold py-2 rounded-xl shadow-sm">Login Here</h2></div>
+                            <form action="/Account/Login" method="post">
+                                <div class="mb-5 relative"><input type="email" name="email" placeholder="Enter Email" required class="w-full bg-transparent border-b-2 border-indigo-500/50 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all"></div>
+                                <div class="mb-8 relative"><input type="password" name="password" placeholder="Enter Password" required class="w-full bg-transparent border-b-2 border-indigo-500/50 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all"></div>
+                                <button type="submit" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 rounded-xl transition-all shadow-lg mb-4">Login</button>
+                            </form>
+                            <div class="text-center"><p class="text-slate-400 text-sm mb-1">Don't have an account?</p><a href="/Account/Register" class="text-indigo-400 hover:underline text-sm font-bold">Sign up here</a></div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white text-slate-800 py-10 border-t border-slate-200 w-full shrink-0 z-20">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center">
+                <div class="flex flex-col items-center text-center group">
+                    <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center text-2xl mb-3 shadow-sm"><i class="fa-solid fa-chalkboard-user"></i></div>
+                    <h3 class="text-lg font-display font-semibold mb-2 text-slate-900">Expert Tutors</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed max-w-[250px]">Learn from native speakers and professionals tailored to your goals.</p>
+                </div>
+                <div class="flex flex-col items-center text-center group">
+                    <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl mb-3 shadow-sm"><i class="fa-solid fa-calendar-check"></i></div>
+                    <h3 class="text-lg font-display font-semibold mb-2 text-slate-900">Flexible Schedule</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed max-w-[250px]">Book sessions that fit seamlessly into your life using our dashboard.</p>
+                </div>
+                <div class="flex flex-col items-center text-center group">
+                    <div class="w-16 h-16 bg-amber-100 text-amber-500 rounded-2xl flex items-center justify-center text-2xl mb-3 shadow-sm"><i class="fa-solid fa-rocket"></i></div>
+                    <h3 class="text-lg font-display font-semibold mb-2 text-slate-900">Rapid Progress</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed max-w-[250px]">Immerse yourself in conversation and see fluency skyrocket.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

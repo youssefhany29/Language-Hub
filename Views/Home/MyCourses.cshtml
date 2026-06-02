@@ -1,0 +1,120 @@
+@model LanguageHub.Models.ViewModels.TutorCoursesViewModel
+@{
+    ViewData["Title"] = "My Courses";
+}
+
+<div class="max-w-7xl mx-auto px-8 py-12 w-full">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-4xl font-display font-bold text-slate-900 mb-2">My Courses</h1>
+            <p class="text-slate-500 text-lg">Manage your courses, quizzes, students, and quiz grades.</p>
+        </div>
+        <a href="/Home/CreateCourse" class="bg-brand-primary hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-colors whitespace-nowrap">
+            + New Course
+        </a>
+    </div>
+
+    @if (!Model.Courses.Any())
+    {
+        <div class="bg-white rounded-2xl border border-dashed border-slate-300 p-12 text-center">
+            <i class="fa-regular fa-folder-open text-4xl text-slate-300 mb-4"></i>
+            <h2 class="text-xl font-bold text-slate-700 mb-2">No courses yet</h2>
+            <p class="text-slate-500 mb-6">Create your first course so students can book and access quizzes.</p>
+            <a href="/Home/CreateCourse" class="inline-block bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-6 rounded-xl transition-colors">Create Course</a>
+        </div>
+    }
+    else
+    {
+        <div class="space-y-8">
+            @foreach (var course in Model.Courses)
+            {
+                var students = course.Bookings
+                    .Where(b => b.Student != null)
+                    .GroupBy(b => b.StudentId)
+                    .Select(g => g.First().Student)
+                    .ToList();
+                var courseAttempts = Model.QuizAttempts
+                    .Where(a => a.Quiz != null && a.Quiz.CourseId == course.Id)
+                    .ToList();
+
+                <section class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                    <div class="p-6 border-b border-slate-100 flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                        <div>
+                            <span class="bg-indigo-50 text-indigo-700 text-xs uppercase font-bold px-3 py-1 rounded-full">@course.TargetLanguage - @course.TargetLevel</span>
+                            <h2 class="text-2xl font-display font-bold text-slate-900 mt-3">@course.Title</h2>
+                            <p class="text-slate-500 mt-2 max-w-3xl">@course.Description</p>
+                        </div>
+                        <div class="flex gap-3 shrink-0">
+                            <a href="/Home/ManageEducationalTools?courseId=@course.Id" class="bg-amber-100 text-amber-700 hover:bg-amber-200 font-bold py-2.5 px-4 rounded-xl transition-colors">
+                                Quizzes (@course.Quizzes.Count)
+                            </a>
+                            <form asp-controller="Home" asp-action="DeleteCourse" method="post" onsubmit="return confirm('Delete this course completely?');">
+                                <input type="hidden" name="id" value="@course.Id" />
+                                <button type="submit" class="bg-red-50 text-red-600 hover:bg-red-500 hover:text-white border border-red-200 font-bold py-2.5 px-4 rounded-xl transition-colors">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
+                        <div class="p-6 border-b lg:border-b-0 lg:border-r border-slate-100">
+                            <h3 class="text-lg font-bold text-slate-800 mb-4">Students</h3>
+                            @if (!students.Any())
+                            {
+                                <p class="text-slate-400 text-sm">No students booked this course yet.</p>
+                            }
+                            else
+                            {
+                                <div class="space-y-3">
+                                    @foreach (var student in students)
+                                    {
+                                        <div class="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl p-3">
+                                            <div>
+                                                <div class="font-bold text-slate-800">@student?.Name</div>
+                                                <div class="text-sm text-slate-500">@student?.Email</div>
+                                            </div>
+                                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">Booked</span>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+
+                        <div class="p-6">
+                            <h3 class="text-lg font-bold text-slate-800 mb-4">Quiz Grades</h3>
+                            @if (!courseAttempts.Any())
+                            {
+                                <p class="text-slate-400 text-sm">No quiz submissions yet.</p>
+                            }
+                            else
+                            {
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-left text-sm">
+                                        <thead class="text-slate-500 border-b border-slate-100">
+                                            <tr>
+                                                <th class="py-2 pr-3">Student</th>
+                                                <th class="py-2 pr-3">Quiz</th>
+                                                <th class="py-2 pr-3">Grade</th>
+                                                <th class="py-2">Submitted</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-slate-100">
+                                            @foreach (var attempt in courseAttempts)
+                                            {
+                                                <tr>
+                                                    <td class="py-3 pr-3 font-medium text-slate-700">@attempt.Student?.Name</td>
+                                                    <td class="py-3 pr-3 text-slate-600">@attempt.Quiz?.Title</td>
+                                                    <td class="py-3 pr-3 font-bold text-emerald-600">@attempt.Score/@attempt.TotalQuestions (@attempt.Percentage.ToString("0.0")%)</td>
+                                                    <td class="py-3 text-slate-400">@attempt.SubmittedAt.ToString("MMM dd, yyyy")</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </section>
+            }
+        </div>
+    }
+</div>

@@ -1,0 +1,38 @@
+# Build output
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / JetBrains
+.idea/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ASP.NET local development
+appsettings.Development.json
+Properties/launchSettings.json
+
+# SQLite local database
+*.db
+*.db-shm
+*.db-wal
+
+# Publish output
+publish/
+wwwroot/lib/
